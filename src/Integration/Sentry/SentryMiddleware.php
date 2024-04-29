@@ -26,7 +26,7 @@ final class SentryMiddleware implements MiddlewareInterface
             yield $next->handle($request);
         } finally {
             $result = $this->hub->getClient()?->flush();
-            if ($result instanceof GuzzleHttp\Promise\PromiseInterface) {
+            if ($result instanceof \GuzzleHttp\Promise\PromiseInterface) {
                 $result->wait(false);
             }
 
