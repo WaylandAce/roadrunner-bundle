@@ -17,9 +17,10 @@ final class SentryListener implements EventSubscriberInterface
 
     public function onWorkerStop(WorkerStopEvent $event): void
     {
-        $client = $this->hub->getClient();
-
-        $client?->flush()->wait(false);
+        $result = $this->hub->getClient()?->flush();
+        if ($result instanceof GuzzleHttp\Promise\PromiseInterface) {
+            $result->wait(false);
+        }
     }
 
     public function onWorkerException(WorkerExceptionEvent $event): void
