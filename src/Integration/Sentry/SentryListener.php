@@ -6,6 +6,7 @@ namespace Baldinof\RoadRunnerBundle\Integration\Sentry;
 
 use Baldinof\RoadRunnerBundle\Event\WorkerExceptionEvent;
 use Baldinof\RoadRunnerBundle\Event\WorkerStopEvent;
+use GuzzleHttp\Promise\PromiseInterface;
 use Sentry\State\HubInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -18,7 +19,7 @@ final class SentryListener implements EventSubscriberInterface
     public function onWorkerStop(WorkerStopEvent $event): void
     {
         $result = $this->hub->getClient()?->flush();
-        if ($result instanceof \GuzzleHttp\Promise\PromiseInterface) {
+        if (class_exists(PromiseInterface::class) && $result instanceof PromiseInterface) {
             $result->wait(false);
         }
     }

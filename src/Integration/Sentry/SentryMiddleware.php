@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Baldinof\RoadRunnerBundle\Integration\Sentry;
 
 use Baldinof\RoadRunnerBundle\Http\MiddlewareInterface;
+use GuzzleHttp\Promise\PromiseInterface;
 use Sentry\State\HubInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -26,7 +27,7 @@ final class SentryMiddleware implements MiddlewareInterface
             yield $next->handle($request);
         } finally {
             $result = $this->hub->getClient()?->flush();
-            if ($result instanceof \GuzzleHttp\Promise\PromiseInterface) {
+            if (class_exists(PromiseInterface::class) && $result instanceof PromiseInterface) {
                 $result->wait(false);
             }
 
